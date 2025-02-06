@@ -7,17 +7,15 @@ import yfinance as yf
 import pandas as pd
 from datetime import datetime
 
-# Pastikan file credentials.json ada di tempat yang benar
+# Pastikan file credentials.json ada
 with open('credentials.json') as f:
     firebase_cred = json.load(f)
 
-# Gunakan kredensial untuk menginisialisasi Firebase
-app = firebase_admin.initialize_app(credentials.Certificate(firebase_cred))
+# Cek apakah Firebase sudah diinisialisasi sebelumnya
+if not firebase_admin._apps:
+    cred = credentials.Certificate(firebase_cred)
+    firebase_admin.initialize_app(cred)
 
-
-# Inisialisasi kredensial Firebase
-cred = credentials.Certificate(firebase_cred)
-firebase_admin.initialize_app(cred)
 
 # Inisialisasi Firestore
 db = firestore.client()
