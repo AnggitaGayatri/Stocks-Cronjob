@@ -24,7 +24,7 @@ jobs:
 
       - name: Set Firebase credentials
         run: |
-          echo "${{ secrets.FIREBASE_CREDENTIALS }}" > credentials.json
+          echo '${{ secrets.FIREBASE_CREDENTIALS }}' | jq . > credentials.json
 
       - name: Run script
         run: |
