@@ -44,13 +44,12 @@ for ticker in lq45_tickers:
         # Referensi ke dokumen yang sesuai di Firestore
         doc_ref = db.collection("stocks").document(ticker).collection("daily_data").document(date_time_str)
 
-        # Periksa jika dokumen sudah ada, hapus jika ada data lama
         if doc_ref.get().exists:
-            doc_ref.delete()  # Hapus dokumen lama jika sudah ada
+            doc_ref.delete()  
 
         # Simpan data harga saham ke Firestore
         doc_ref.set({
-            "Adj Close": float(row['Adj Close']),
+            "Adj Close": float(row['Adj Close']) if 'Adj Close' in row else None,
             "Close": float(row['Close']),
             "High": float(row['High']),
             "Low": float(row['Low']),
