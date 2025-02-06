@@ -1,0 +1,31 @@
+name: Fetch Stock Data
+
+on:
+  schedule:
+    - cron: '15 2,3,4,6,7,8,9 * * 1-5'  # Konversi dari WITA ke UTC
+
+jobs:
+  fetch_stock_data:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.x'
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+
+      - name: Set Firebase credentials
+        run: |
+          echo "${{ secrets.FIREBASE_CREDENTIALS }}" > credentials.json
+
+      - name: Run script
+        run: |
+          python unduh_data.py
+
