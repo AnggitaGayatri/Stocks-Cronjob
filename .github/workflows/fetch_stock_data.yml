@@ -3,6 +3,7 @@ name: Fetch Stock Data
 on:
   schedule:
     - cron: '15 2,3,4,6,7,8,9 * * 1-5'  # Konversi dari WITA ke UTC
+  workflow_dispatch: # Dapat dipicu secara manual
 
 jobs:
   fetch_stock_data:
