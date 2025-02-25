@@ -33,28 +33,31 @@ lq45_tickers = [
     'SRTG.JK', 'TLKM.JK', 'TOWR.JK', 'UNTR.JK', 'UNVR.JK'
 ]
 
-# Mengunduh data per jam dan menyimpannya di Firestore
 for ticker in lq45_tickers:
-    stock_data = yf.download(ticker, period="1d", interval="60m")  # Data per jam
+    stock_data = yf.download(ticker, period="1d", interval="60m")
 
-    # Simpan data di Firestore
-    for date_time, row in stock_data.iterrows():
-        date_time_str = date_time.strftime('%Y-%m-%d %H:%M:%S')
+    if stock_data.empty:
+        print(f"Tidak ada data yang tersedia untuk {ticker}")
+    else:
+        print(f"Kolom tersedia untuk {ticker}: {stock_data.columns}")
 
-        # Referensi ke dokumen yang sesuai di Firestore
-        doc_ref = db.collection("stocks").document(ticker).collection("daily_data").document(date_time_str)
+        stock_data.index = (stock_data.index + pd.Timedelta(hours=7)).tz_localize(None)
 
-        if doc_ref.get().exists:
-            doc_ref.delete()  
+        for date_time, row in stock_data.iterrows():
+            date_time_str = date_time.strftime('%Y-%m-%d %H:%M:%S')
 
-        # Simpan data harga saham ke Firestore
-        doc_ref.set({
-            "Adj Close": float(row['Adj Close']) if 'Adj Close' in row else None,
-            "Close": float(row['Close']),
-            "High": float(row['High']),
-            "Low": float(row['Low']),
-            "Open": float(row['Open']),
-            "Volume": int(row['Volume'])
-        })
+            doc_ref = db.collection("stocks").document(ticker).collection("daily_data").document(date_time_str)
 
-print("Data saham per jam berhasil diperbarui di Firestore.")
+            if doc_ref.get().exists:
+                doc_ref.delete()
+
+            doc_ref.set({
+                "Adj Close": float(row['Adj Close']) if 'Adj Close' in row else None,
+                "Close": float(row['Close']),
+                "High": float(row['High']),
+                "Low": float(row['Low']),
+                "Open": float(row['Open']),
+                "Volume": int(row['Volume']),
+            })
+
+print("Data saham per jam berhasil diperbarui")
