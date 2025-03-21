@@ -46,12 +46,13 @@ for ticker in lq45_tickers:
         for date_time, row in stock_data.iterrows():
             date_time_str = date_time.strftime('%Y-%m-%d %H:%M:%S')
 
-            doc_ref = db.collection("stocks").document(ticker).collection("daily_data").document(date_time_str)
+            doc_ref = db.collection("stock_data").document(ticker).collection("daily_data").document(date_time_str)
 
             if doc_ref.get().exists:
                 doc_ref.delete()
 
             doc_ref.set({
+                "timestamp": date_time, 
                 "Adj Close": float(row['Adj Close']) if 'Adj Close' in row else None,
                 "Close": float(row['Close']),
                 "High": float(row['High']),
